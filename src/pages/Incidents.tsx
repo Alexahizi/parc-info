@@ -1,0 +1,161 @@
+import type React from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { api } from '../lib/api'
+import { formatDate } from '../lib/format'
+import type { Asset, Incident } from '../types'
+import { Button, Card, PageTitle, Select, Table, Textarea, Input } from '../components/Ui'
+
+type IncidentRow = Incident & { asset: Asset }
+
+export function IncidentsPage() {
+  const [assets, setAssets] = useState<Asset[]>([])
+  const [items, setItems] = useState<IncidentRow[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const [assetId, setAssetId] = useState<number | ''>('')
+  const [department, setDepartment] = useState('')
+  const [reportedAt, setReportedAt] = useState(new Date().toISOString().slice(0, 10))
+  const [description, setDescription] = useState('')
+
+  const assetsById = useMemo(() => {
+    const m = new Map<number, Asset>()
+    for (const a of assets) m.set(a.id, a)
+    return m
+  }, [assets])
+
+  function load() {
+    setLoading(true)
+    setError(null)
+    Promise.all([
+      api<Asset[]>('/api/assets'),
+      api<IncidentRow[]>('/api/incidents?status=OUVERT'),
+    ])
+      .then(([a, i]) => {
+        setAssets(a)
+        setItems(i)
+      })
+      .catch((e) => setError(String(e?.message ?? e)))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  async function createIncident(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    if (!assetId) return
+    try {
+      await api<Incident>(`/api/assets/${assetId}/incidents`, {
+        method: 'POST',
+        body: JSON.stringify({ department, reportedAt, description }),
+      })
+      setAssetId('')
+      setDepartment('')
+      setReportedAt(new Date().toISOString().slice(0, 10))
+      setDescription('')
+      load()
+    } catch (err: any) {
+      setError(String(err?.message ?? err))
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <PageTitle>Gestion des Pannes</PageTitle>
+        <Button onClick={load} disabled={loading}>
+          Actualiser
+        </Button>
+      </div>
+
+      {error ? (
+        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+          {error}
+        </div>
+      ) : null}
+
+      <Card title="Signaler un problème">
+        <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={createIncident}>
+          <Select
+            label="Matériel"
+            value={assetId}
+            onChange={(e) => setAssetId(e.target.value ? Number(e.target.value) : '')}
+            required
+          >
+            <option value="">Sélectionner…</option>
+            {assets.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.inventoryNumber} — {a.type} — {a.brand} {a.model}
+              </option>
+            ))}
+          </Select>
+          <Input
+            label="Direction concernée"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+            required
+          />
+          <Input
+            label="Date de signalement"
+            type="date"
+            value={reportedAt}
+            onChange={(e) => setReportedAt(e.target.value)}
+            required
+          />
+          <div />
+          <div className="md:col-span-2">
+            <Textarea
+              label="Description du problème"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              rows={4}
+            />
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" variant="primary" disabled={loading}>
+              Enregistrer la panne
+            </Button>
+          </div>
+        </form>
+        <div className="mt-3 text-xs text-slate-600">
+          Lorsqu’une panne est signalée, l’état du matériel passe automatiquement à <b>En Panne</b>.
+        </div>
+      </Card>
+
+      <Card title="Pannes en cours (incidents ouverts)">
+        <Table columns={['Inventaire', 'Matériel', 'Direction', 'Signalé le', 'Description']}>
+          {items.map((it) => {
+            const a = it.asset ?? assetsById.get(it.assetId)
+            return (
+              <tr key={it.id} className="hover:bg-slate-50">
+                <td className="border-b border-slate-100 px-3 py-2 font-medium">
+                  {a?.inventoryNumber ?? `#${it.assetId}`}
+                </td>
+                <td className="border-b border-slate-100 px-3 py-2">
+                  {a ? `${a.type} — ${a.brand} ${a.model}` : '—'}
+                </td>
+                <td className="border-b border-slate-100 px-3 py-2">{it.department}</td>
+                <td className="border-b border-slate-100 px-3 py-2">
+                  {formatDate(it.reportedAt)}
+                </td>
+                <td className="border-b border-slate-100 px-3 py-2">{it.description}</td>
+              </tr>
+            )
+          })}
+          {!items.length ? (
+            <tr>
+              <td className="border-b border-slate-100 px-3 py-6 text-slate-600" colSpan={5}>
+                {loading ? 'Chargement…' : 'Aucune panne en cours.'}
+              </td>
+            </tr>
+          ) : null}
+        </Table>
+      </Card>
+    </div>
+  )
+}
+

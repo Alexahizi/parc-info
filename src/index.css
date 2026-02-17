@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+/* Base "light" uniquement (pas de dark mode). */
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #0f172a; /* slate-900 */
+}
