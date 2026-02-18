@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
-/* Base "light" uniquement (pas de dark mode). */
 :root {
   color-scheme: light;
+  --color-primary: #16a34a;
+  --color-primary-hover: #15803d;
+  --color-pill-active: #dcfce7;
+  --color-pill-active-text: #166534;
+  --color-pill-paused: #ffedd5;
+  --color-pill-paused-text: #c2410c;
+  --color-link: #2563eb;
 }
 
 html,
@@ -12,6 +18,22 @@ body {
 
 body {
   margin: 0;
-  background: #ffffff;
-  color: #0f172a; /* slate-900 */
+  background: #fafafa;
+  color: #1f2937;
+}
+
+/* Onglets soulignés style Cyberdyne */
+.tab-active {
+  border-bottom: 2px solid var(--color-primary);
+  color: #111827;
+  font-weight: 600;
+}
+
+.tab-inactive {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.tab-inactive:hover {
+  color: #111827;
 }

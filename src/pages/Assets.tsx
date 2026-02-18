@@ -98,7 +98,7 @@ export function AssetsPage() {
       </div>
 
       {error ? (
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       ) : null}
@@ -197,19 +197,19 @@ export function AssetsPage() {
 
         <Table columns={['Inventaire', 'Type', 'Marque', 'Modèle', 'Entrée', 'Fournisseur', 'État', 'Détails']}>
           {items.map((a) => (
-            <tr key={a.id} className="hover:bg-slate-50">
-              <td className="border-b border-slate-100 px-3 py-2 font-medium text-slate-900">
+            <tr key={a.id} className="hover:bg-gray-50">
+              <td className="px-4 py-3 text-gray-600 font-medium text-gray-900">
                 {a.inventoryNumber}
               </td>
-              <td className="border-b border-slate-100 px-3 py-2">{a.type}</td>
-              <td className="border-b border-slate-100 px-3 py-2">{a.brand}</td>
-              <td className="border-b border-slate-100 px-3 py-2">{a.model}</td>
-              <td className="border-b border-slate-100 px-3 py-2">{formatDate(a.entryDate)}</td>
-              <td className="border-b border-slate-100 px-3 py-2">{a.supplier}</td>
-              <td className="border-b border-slate-100 px-3 py-2">
+              <td className="px-4 py-3 text-gray-600">{a.type}</td>
+              <td className="px-4 py-3 text-gray-600">{a.brand}</td>
+              <td className="px-4 py-3 text-gray-600">{a.model}</td>
+              <td className="px-4 py-3 text-gray-600">{formatDate(a.entryDate)}</td>
+              <td className="px-4 py-3 text-gray-600">{a.supplier}</td>
+              <td className="px-4 py-3 text-gray-600">
                 <StatusBadge status={a.status} />
               </td>
-              <td className="border-b border-slate-100 px-3 py-2">
+              <td className="px-4 py-3 text-gray-600">
                 <Link className="text-slate-900 underline" to={`/assets/${a.id}`}>
                   Voir l’historique
                 </Link>
@@ -218,7 +218,7 @@ export function AssetsPage() {
           ))}
           {!items.length ? (
             <tr>
-              <td className="border-b border-slate-100 px-3 py-6 text-slate-600" colSpan={8}>
+              <td className="px-4 py-8 text-center text-gray-500" colSpan={8}>
                 {loading ? 'Chargement…' : 'Aucun matériel.'}
               </td>
             </tr>

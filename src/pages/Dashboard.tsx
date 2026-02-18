@@ -1,14 +1,30 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../lib/api'
 import type { DashboardStats } from '../types'
-import { Card, PageTitle } from '../components/Ui'
+import { Card, PageTitle, Table } from '../components/Ui'
 
-function Stat({ label, value }: { label: string; value: number | string }) {
+function StatPill({
+  label,
+  value,
+  active,
+}: {
+  label: string
+  value: number | string
+  active?: boolean
+}) {
   return (
-    <div className="border border-slate-200 bg-white p-4">
-      <div className="text-xs font-medium text-slate-600">{label}</div>
-      <div className="mt-1 text-2xl font-semibold text-slate-900">{value}</div>
-    </div>
+    <span
+      className={
+        active
+          ? 'inline-flex items-center gap-2 rounded-full bg-[var(--color-pill-active)] px-3 py-1.5 text-sm font-medium text-[var(--color-pill-active-text)]'
+          : 'inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700'
+      }
+    >
+      {active ? (
+        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+      ) : null}
+      {label} {value}
+    </span>
   )
 }
 
@@ -35,89 +51,121 @@ export function DashboardPage() {
     () => Math.max(1, ...top.map((t) => t.count)),
     [top],
   )
+  const totalAssets = useMemo(
+    () =>
+      data
+        ? Object.values(data.countsByStatus).reduce((a, b) => a + b, 0)
+        : 0,
+    [data],
+  )
+  const statusEntries = useMemo(
+    () =>
+      data
+        ? Object.entries(data.countsByStatus).sort((a, b) => b[1] - a[1])
+        : [],
+    [data],
+  )
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <PageTitle>Dashboard</PageTitle>
-        <div className="text-xs text-slate-600">Données par défaut (seed)</div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <PageTitle>Résultats</PageTitle>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatPill
+            label="Total matériels"
+            value={totalAssets}
+            active
+          />
+          <StatPill label="En stock" value={data?.stockVsAssigned.enStock ?? '—'} />
+          <StatPill label="Affectés" value={data?.stockVsAssigned.affecte ?? '—'} />
+          <StatPill label="Réparations en cours" value={data?.repairsInProgress ?? '—'} />
+        </div>
       </div>
 
       {error ? (
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <Stat label="En stock" value={data?.stockVsAssigned.enStock ?? '—'} />
-        <Stat label="Affectés" value={data?.stockVsAssigned.affecte ?? '—'} />
-        <Stat label="Réparations en cours" value={data?.repairsInProgress ?? '—'} />
-        <Stat
-          label="Total matériels"
-          value={
-            data
-              ? Object.values(data.countsByStatus).reduce((a, b) => a + b, 0)
-              : '—'
-          }
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card title="Répartition par état">
-          <div className="space-y-2">
-            {data
-              ? Object.entries(data.countsByStatus)
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([k, v]) => {
-                    const pct =
-                      (v / Math.max(1, Object.values(data.countsByStatus).reduce((a, b) => a + b, 0))) * 100
-                    return (
-                      <div key={k} className="space-y-1">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium text-slate-900">{k}</span>
-                          <span className="text-slate-600">{v}</span>
-                        </div>
-                        <div className="h-2 border border-slate-200 bg-white">
-                          <div
-                            className="h-2 bg-slate-900"
-                            style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
-                          />
-                        </div>
-                      </div>
-                    )
-                  })
+      {/* Graphique à barres horizontal — Top directions (pannes) */}
+      <Card title="Répartition par état">
+        <div className="mb-6">
+          <div className="mb-2 flex items-end gap-1" style={{ height: 200 }}>
+            {statusEntries.length
+              ? statusEntries.map(([label, value]) => {
+                  return (
+                    <div
+                      key={label}
+                      className="flex flex-1 flex-col items-center gap-1"
+                      title={`${label}: ${value}`}
+                    >
+                      <div
+                        className="w-full rounded-t bg-[var(--color-primary)] transition-all"
+                        style={{
+                          height: `${Math.max(4, (value / Math.max(...Object.values(data!.countsByStatus))) * 100)}%`,
+                          minHeight: 8,
+                        }}
+                      />
+                      <span className="text-xs font-medium text-gray-600">{value}</span>
+                      <span className="max-w-full truncate text-xs text-gray-500" title={label}>
+                        {label.replace(/_/g, ' ')}
+                      </span>
+                    </div>
+                  )
+                })
               : 'Chargement…'}
           </div>
-        </Card>
+        </div>
 
-        <Card title="Top directions ayant le plus de pannes">
-          <div className="space-y-2">
-            {top.length ? (
-              top.map((t) => {
+        {top.length > 0 ? (
+          <div className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Top directions — pannes
+            </h3>
+            <div className="space-y-2">
+              {top.map((t) => {
                 const pct = (t.count / maxTop) * 100
                 return (
                   <div key={t.department} className="space-y-1">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-medium text-slate-900">{t.department}</span>
-                      <span className="text-slate-600">{t.count}</span>
+                      <span className="font-medium text-gray-900">{t.department}</span>
+                      <span className="text-gray-600">{t.count}</span>
                     </div>
-                    <div className="h-2 border border-slate-200 bg-white">
+                    <div className="h-2 overflow-hidden rounded-full bg-gray-100">
                       <div
-                        className="h-2 bg-red-600"
-                        style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
+                        className="h-full rounded-full bg-[var(--color-primary)] transition-all"
+                        style={{ width: `${Math.max(2, pct)}%` }}
                       />
                     </div>
                   </div>
                 )
-              })
-            ) : (
-              <div className="text-sm text-slate-600">—</div>
-            )}
+              })}
+            </div>
           </div>
-        </Card>
-      </div>
+        ) : null}
+      </Card>
+
+      {/* Tableau récap — style Cyberdyne */}
+      <Card title="Synthèse par état">
+        <Table columns={['État', 'Effectif']}>
+          {statusEntries.map(([status, count]) => (
+            <tr key={status} className="hover:bg-gray-50">
+              <td className="px-4 py-3 font-medium text-gray-900">
+                {status.replace(/_/g, ' ')}
+              </td>
+              <td className="px-4 py-3 text-gray-600">{count}</td>
+            </tr>
+          ))}
+          {!statusEntries.length ? (
+            <tr>
+              <td className="px-4 py-8 text-center text-gray-500" colSpan={2}>
+                {data ? 'Aucune donnée.' : 'Chargement…'}
+              </td>
+            </tr>
+          ) : null}
+        </Table>
+      </Card>
     </div>
   )
 }
-

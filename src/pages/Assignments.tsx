@@ -75,7 +75,7 @@ export function AssignmentsPage() {
       </div>
 
       {error ? (
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       ) : null}
@@ -130,8 +130,8 @@ export function AssignmentsPage() {
           {items
             .filter((a) => a.activeAssignment)
             .map((a) => (
-              <tr key={a.id} className="hover:bg-slate-50">
-                <td className="border-b border-slate-100 px-3 py-2 font-medium">
+              <tr key={a.id} className="hover:bg-gray-50">
+                <td className="border-b border-slate-100 px-3 py-2 font-medium text-gray-900">
                   {a.inventoryNumber}
                 </td>
                 <td className="border-b border-slate-100 px-3 py-2">
@@ -161,7 +161,7 @@ export function AssignmentsPage() {
             ))}
           {!items.filter((a) => a.activeAssignment).length ? (
             <tr>
-              <td className="border-b border-slate-100 px-3 py-6 text-slate-600" colSpan={7}>
+              <td className="px-4 py-8 text-center text-gray-500" colSpan={7}>
                 {loading ? 'Chargement…' : 'Aucune affectation active.'}
               </td>
             </tr>

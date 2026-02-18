@@ -72,7 +72,7 @@ export function IncidentsPage() {
       </div>
 
       {error ? (
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       ) : null}
@@ -131,24 +131,24 @@ export function IncidentsPage() {
           {items.map((it) => {
             const a = it.asset ?? assetsById.get(it.assetId)
             return (
-              <tr key={it.id} className="hover:bg-slate-50">
-                <td className="border-b border-slate-100 px-3 py-2 font-medium">
+              <tr key={it.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 font-medium text-gray-900">
                   {a?.inventoryNumber ?? `#${it.assetId}`}
                 </td>
-                <td className="border-b border-slate-100 px-3 py-2">
+                <td className="px-4 py-3 text-gray-600">
                   {a ? `${a.type} — ${a.brand} ${a.model}` : '—'}
                 </td>
-                <td className="border-b border-slate-100 px-3 py-2">{it.department}</td>
-                <td className="border-b border-slate-100 px-3 py-2">
+                <td className="px-4 py-3 text-gray-600">{it.department}</td>
+                <td className="px-4 py-3 text-gray-600">
                   {formatDate(it.reportedAt)}
                 </td>
-                <td className="border-b border-slate-100 px-3 py-2">{it.description}</td>
+                <td className="px-4 py-3 text-gray-600">{it.description}</td>
               </tr>
             )
           })}
           {!items.length ? (
             <tr>
-              <td className="border-b border-slate-100 px-3 py-6 text-slate-600" colSpan={5}>
+              <td className="px-4 py-8 text-center text-gray-500" colSpan={5}>
                 {loading ? 'Chargement…' : 'Aucune panne en cours.'}
               </td>
             </tr>

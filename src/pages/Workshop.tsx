@@ -97,7 +97,7 @@ export function WorkshopPage() {
       </div>
 
       {error ? (
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           {error}
         </div>
       ) : null}
@@ -151,20 +151,20 @@ export function WorkshopPage() {
       <Card title="Réparations en cours (alertes)">
         <Table columns={['Matériel', 'État', 'Incident', 'Entrée atelier', 'Action', 'Coût', 'Clôture']}>
           {repairs.map((r) => (
-            <tr key={r.id} className="hover:bg-slate-50">
-              <td className="border-b border-slate-100 px-3 py-2 font-medium">
+            <tr key={r.id} className="hover:bg-gray-50">
+              <td className="px-4 py-3 font-medium text-gray-900">
                 {r.incident.asset.inventoryNumber} — {r.incident.asset.brand} {r.incident.asset.model}
               </td>
-              <td className="border-b border-slate-100 px-3 py-2">
+              <td className="px-4 py-3">
                 <StatusBadge status={r.incident.asset.status} />
               </td>
-              <td className="border-b border-slate-100 px-3 py-2">
+              <td className="px-4 py-3 text-gray-600">
                 #{r.incidentId} — {r.incident.department}
               </td>
-              <td className="border-b border-slate-100 px-3 py-2">{formatDate(r.workshopIn)}</td>
-              <td className="border-b border-slate-100 px-3 py-2">{r.action}</td>
-              <td className="border-b border-slate-100 px-3 py-2">{r.cost.toFixed(2)}</td>
-              <td className="border-b border-slate-100 px-3 py-2">
+              <td className="px-4 py-3 text-gray-600">{formatDate(r.workshopIn)}</td>
+              <td className="px-4 py-3 text-gray-600">{r.action}</td>
+              <td className="px-4 py-3 text-gray-600">{r.cost.toFixed(2)}</td>
+              <td className="px-4 py-3">
                 <div className="flex gap-2">
                   <Button onClick={() => finishRepair(r.id, 'EN_SERVICE')} variant="primary">
                     En service
@@ -178,7 +178,7 @@ export function WorkshopPage() {
           ))}
           {!repairs.length ? (
             <tr>
-              <td className="border-b border-slate-100 px-3 py-6 text-slate-600" colSpan={7}>
+              <td className="px-4 py-8 text-center text-gray-500" colSpan={7}>
                 {loading ? 'Chargement…' : 'Aucune réparation en cours.'}
               </td>
             </tr>

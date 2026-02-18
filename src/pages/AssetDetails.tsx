@@ -34,10 +34,10 @@ export function AssetDetailsPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <Link className="text-slate-900 underline" to="/assets">
+        <Link className="text-[var(--color-link)] hover:underline" to="/assets">
           Retour
         </Link>
-        <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</div>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</div>
       </div>
     )
   }
@@ -93,11 +93,11 @@ export function AssetDetailsPage() {
         <Card title="Affectations (historique)">
           <Table columns={['Direction', 'Utilisateur', 'Début', 'Fin']}>
             {data.assignments.map((a) => (
-              <tr key={a.id} className="hover:bg-slate-50">
-                <td className="border-b border-slate-100 px-3 py-2">{a.department}</td>
-                <td className="border-b border-slate-100 px-3 py-2">{a.user}</td>
-                <td className="border-b border-slate-100 px-3 py-2">{formatDate(a.startDate)}</td>
-                <td className="border-b border-slate-100 px-3 py-2">
+              <tr key={a.id} className="hover:bg-gray-50">
+                <td className="px-4 py-3 text-gray-600">{a.department}</td>
+                <td className="px-4 py-3 text-gray-600">{a.user}</td>
+                <td className="px-4 py-3 text-gray-600">{formatDate(a.startDate)}</td>
+                <td className="px-4 py-3 text-gray-600">
                   {a.endDate ? formatDate(a.endDate) : '—'}
                 </td>
               </tr>
@@ -115,7 +115,7 @@ export function AssetDetailsPage() {
         <Card title="Incidents & réparations">
           <div className="space-y-3">
             {data.incidents.map((i) => (
-              <div key={i.id} className="border border-slate-200 bg-white p-3">
+              <div key={i.id} className="rounded-lg border border-gray-200 bg-white p-3">
                 <div className="flex items-center justify-between text-sm">
                   <div className="font-semibold text-slate-900">Incident #{i.id}</div>
                   <div className="text-xs text-slate-600">{formatDate(i.reportedAt)}</div>
@@ -129,7 +129,7 @@ export function AssetDetailsPage() {
                   <div className="text-xs font-semibold text-slate-900">Réparations</div>
                   <div className="mt-2 space-y-2">
                     {i.repairs.map((r) => (
-                      <div key={r.id} className="border border-slate-200 bg-slate-50 p-2 text-xs">
+                      <div key={r.id} className="rounded border border-gray-200 bg-gray-50 p-2 text-xs">
                         <div className="flex items-center justify-between">
                           <span className="font-semibold">#{r.id} — {r.status}</span>
                           <span>
@@ -160,7 +160,7 @@ export function AssetDetailsPage() {
       </Card>
 
       <div>
-        <Link className="text-slate-900 underline" to="/assets">
+        <Link className="text-[var(--color-link)] hover:underline" to="/assets">
           Retour à la liste
         </Link>
       </div>
