@@ -101,11 +101,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
         className="fixed inset-y-0 left-0 z-20 flex h-screen w-16 shrink-0 flex-col overflow-hidden border-r border-gray-200 bg-white"
         aria-label="Navigation principale"
       >
-        <div className="flex h-14 shrink-0 items-center justify-center border-b border-gray-200">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-800 text-white">
+        <div className="flex h-14 shrink-0 items-center justify-center border-b border-gray-200 bg-transparent">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-white">
+            {/* Ancien logo SVG */}
+            {/*
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
             </svg>
+            */}
+            {/* Nouveau blason de la Côte d'Ivoire */}
+            <img
+              src="https://www.assnat.ci/imgsite/logo-anci4.png"
+              alt="Blason de la Côte d'Ivoire"
+              className="h-8 w-8 object-contain"
+              style={{ maxHeight: 32, maxWidth: 32 }}
+            />
           </div>
         </div>
         <nav className="flex-1 overflow-hidden p-2" style={{ minHeight: 0 }}>
@@ -119,13 +129,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col items-center gap-2">
             {session ? (
               <span className="max-w-full truncate px-1 text-center text-xs text-gray-600" title={session.user}>
-                {session.user}
+                {/* {session.user} */}
               </span>
             ) : null}
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              className="rounded p-2 cursor-pointer text-gray-500 hover:bg-gray-100 hover:text-gray-700"
               title="Déconnexion"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

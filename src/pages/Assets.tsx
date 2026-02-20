@@ -1,10 +1,10 @@
 import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { api } from '../lib/api'
 import { formatDate } from '../lib/format'
 import type { Asset, AssetStatus } from '../types'
 import { StatusBadge } from '../components/Badge'
+import { ConfirmModal } from '../components/Modal'
 import { Button, Card, Input, PageTitle, Select, Table } from '../components/Ui'
 
 type AssetCreateInput = {
@@ -43,6 +43,9 @@ export function AssetsPage() {
     entryDate: new Date().toISOString().slice(0, 10),
     supplier: '',
   })
+
+  const [assetToDelete, setAssetToDelete] = useState<number | null>(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const types = useMemo(() => {
     const s = new Set(items.map((a) => a.type).filter(Boolean))
@@ -88,8 +91,40 @@ export function AssetsPage() {
     }
   }
 
+  async function confirmDelete() {
+    if (assetToDelete == null) return
+    setError(null)
+    setDeleteLoading(true)
+    try {
+      await api(`/api/assets/${assetToDelete}`, { method: 'DELETE' })
+      setAssetToDelete(null)
+      load()
+    } catch (err: unknown) {
+      setError(String((err as Error)?.message ?? err))
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
+  const assetLabel =
+    assetToDelete != null
+      ? items.find((a) => a.id === assetToDelete)?.inventoryNumber ?? 'ce matériel'
+      : ''
+
   return (
     <div className="space-y-6">
+      <ConfirmModal
+        open={assetToDelete != null}
+        onClose={() => setAssetToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Supprimer le matériel"
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+        loading={deleteLoading}
+      >
+        Êtes-vous sûr de vouloir supprimer <strong>{assetLabel}</strong> ? Cette action est irréversible.
+      </ConfirmModal>
       <div className="flex items-center justify-between">
         <PageTitle>Gestion de Stock</PageTitle>
         <Button onClick={load} disabled={loading}>
@@ -195,10 +230,10 @@ export function AssetsPage() {
           </div>
         </div>
 
-        <Table columns={['Inventaire', 'Type', 'Marque', 'Modèle', 'Entrée', 'Fournisseur', 'État', 'Détails']}>
+        <Table columns={['Inventaire', 'Type', 'Marque', 'Modèle', 'Entrée', 'Fournisseur', 'État', 'Actions']}>
           {items.map((a) => (
             <tr key={a.id} className="hover:bg-gray-50">
-              <td className="px-4 py-3 text-gray-600 font-medium text-gray-900">
+              <td className="px-4 py-3 font-medium text-gray-900">
                 {a.inventoryNumber}
               </td>
               <td className="px-4 py-3 text-gray-600">{a.type}</td>
@@ -209,10 +244,25 @@ export function AssetsPage() {
               <td className="px-4 py-3 text-gray-600">
                 <StatusBadge status={a.status} />
               </td>
-              <td className="px-4 py-3 text-gray-600">
-                <Link className="text-slate-900 underline" to={`/assets/${a.id}`}>
-                  Voir l’historique
-                </Link>
+              <td className="px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="rounded p-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+                    title="Historique / Aperçu"
+                    aria-label="Voir l'historique"
+                    onClick={() => window.location.href = `/assets/${a.id}`}
+                  >
+                    Historique
+                  </div>
+                  <div
+                    className="rounded p-1.5 text-gray-600 hover:bg-red-50 hover:text-red-600 cursor-pointer"
+                    title="Supprimer"
+                    aria-label="Supprimer"
+                    onClick={() => setAssetToDelete(a.id)}
+                  >
+                    Supprimer
+                  </div>
+                </div>
               </td>
             </tr>
           ))}
@@ -228,4 +278,3 @@ export function AssetsPage() {
     </div>
   )
 }
-

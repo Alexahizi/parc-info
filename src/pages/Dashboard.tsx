@@ -55,6 +55,10 @@ function BarChartStatus({
     const values = statusEntries.map(([, n]) => n)
 
     const option: EChartsOption = {
+      animation: true,
+      animationDuration: 700,
+      animationEasing: 'cubicOut',
+      animationDelay: (idx: number) => idx * 80,
       grid: { left: 48, right: 24, top: 16, bottom: 48, containLabel: false },
       xAxis: {
         type: 'category',
@@ -139,6 +143,10 @@ function BarChartTopDepartments({
     const values = top.map((t) => t.count)
 
     const option: EChartsOption = {
+      animation: true,
+      animationDuration: 700,
+      animationEasing: 'cubicOut',
+      animationDelay: (idx: number) => idx * 80,
       grid: { left: 120, right: 48, top: 16, bottom: 24, containLabel: false },
       xAxis: {
         type: 'value',
