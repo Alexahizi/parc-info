@@ -15,7 +15,7 @@ export function Card({
   action,
 }: PropsWithChildren<{ title?: string; action?: React.ReactNode }>) {
   return (
-    <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <section className=" border border-gray-200 bg-white shadow-sm">
       {title != null ? (
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
@@ -36,7 +36,7 @@ export function Button(
 ) {
   const { variant = 'default', className, ...rest } = props
   const base =
-    'inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+    'inline-flex items-center justify-center  border px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
   const v =
     variant === 'primary'
       ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)]'
@@ -57,7 +57,7 @@ export function Input(
       ) : null}
       <input
         className={[
-          'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
+          'w-full  border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
           className,
         ]
           .filter(Boolean)
@@ -79,7 +79,7 @@ export function Textarea(
       ) : null}
       <textarea
         className={[
-          'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
+          'w-full  border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
           className,
         ]
           .filter(Boolean)
@@ -101,7 +101,7 @@ export function Select(
       ) : null}
       <select
         className={[
-          'w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
+          'w-full  border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
           className,
         ]
           .filter(Boolean)
@@ -119,7 +119,7 @@ export function Table({
   children,
 }: PropsWithChildren<{ columns: string[] }>) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-x-auto  border border-gray-200 bg-white">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="bg-gray-50">
