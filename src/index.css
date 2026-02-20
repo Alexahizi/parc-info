@@ -37,3 +37,9 @@ body {
 .tab-inactive:hover {
   color: #111827;
 }
+
+@keyframes clipLoaderSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

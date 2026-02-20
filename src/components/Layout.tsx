@@ -1,5 +1,6 @@
 import type React from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { clearSession, getSession } from '../lib/auth'
 
 const navItems: Array<{ to: string; label: string; icon: React.ReactNode }> = [
   {
@@ -80,6 +81,13 @@ function SidebarNavItem({
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const session = getSession()
+
+  const handleLogout = () => {
+    clearSession()
+    navigate('/login', { replace: true })
+  }
 
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/'
@@ -108,8 +116,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </nav>
         <div className="shrink-0 border-t border-gray-200 p-3">
-          <div className="flex justify-center">
-            <div className="h-8 w-8 rounded-full bg-gray-200" title="Profil" />
+          <div className="flex flex-col items-center gap-2">
+            {session ? (
+              <span className="max-w-full truncate px-1 text-center text-xs text-gray-600" title={session.user}>
+                {session.user}
+              </span>
+            ) : null}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              title="Déconnexion"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
           </div>
         </div>
       </aside>
